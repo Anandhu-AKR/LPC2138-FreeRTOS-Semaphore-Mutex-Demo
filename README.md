@@ -1,8 +1,4 @@
-# 🚦 LPC2138 FreeRTOS Semaphore & Mutex Demo
-
-<p align="center">
-  <img src="./schematic.png" alt="Schematic" width="600"/>
-</p>
+#  LPC2138 FreeRTOS Semaphore & Mutex Demo
 
 ---
 
@@ -106,25 +102,21 @@ U0LCR = 0x03; // Disable DLAB, set 8-bit data
 
 ## ⚙️ Build & Run
 
-Hardware Setup
+- **Hardware Setup**
+  - Connect switches to P0.12, P0.13, and P0.14 with pull-down resistors.
+  - Connect UART TX to a virtual terminal or USB-UART converter.
 
-Connect switches to P0.12, P0.13, P0.14 with pull-down resistors.
+- **Build**
+  - Use Keil uVision or any ARM-compatible IDE.
+  - Compile `main.c`.
 
-Connect UART TX to virtual terminal or USB-UART converter.
+- **Load**
+  - Load the generated HEX file onto the LPC2138 microcontroller.
+  - Alternatively, simulate the design in Proteus.
 
-Build
+- **Interact**
+  - Press the switches and observe debug messages on the UART terminal.
 
-Use Keil uVision or any ARM IDE.
-
-Compile main.c.
-
-Load
-
-Load hex to LPC2138 (or simulate in Proteus).
-
-Interact
-
-Press switches and observe messages on UART terminal.
 
 ## 💻 Code
 ```c
