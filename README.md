@@ -265,7 +265,7 @@ void lcd2(void *parm)
 ```
 .
 ├── schematic.png
-├── main.c
+├── counting.c
 ├── README.md
 ```
 
