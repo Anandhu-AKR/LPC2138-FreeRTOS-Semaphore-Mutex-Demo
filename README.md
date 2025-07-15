@@ -1,598 +1,296 @@
-\# 🚦 LPC2138 FreeRTOS Counting Semaphore \& Mutex Demo
-
-
+# 🚦 LPC2138 FreeRTOS Semaphore & Mutex Demo
 
 <p align="center">
-
-&nbsp; <img src="./schematic.png" alt="Schematic" width="500"/>
-
+  <img src="./schematic.png" alt="Schematic" width="600"/>
 </p>
 
+---
 
+## 📄 Table of Contents
+
+- [Overview](#overview)
+- [Schematic](#schematic)
+- [Features](#features)
+- [Hardware Connections](#hardware-connections)
+- [Code Explanation](#code-explanation)
+- [Switch Behavior](#switch-behavior)
+- [UART Configuration](#uart-configuration)
+- [Build & Run](#build--run)
+- [Code](#code)
+- [Repository Structure](#repository-structure)
+- [License](#license)
+- [Author](#author)
+- [Contact](#contact)
 
 ---
 
+## ✅ Overview
 
-
-\## 📄 Table of Contents
-
-
-
-\- \[Overview](#overview)
-
-\- \[Schematic](#schematic)
-
-\- \[Features](#features)
-
-\- \[Hardware Connections](#hardware-connections)
-
-\- \[Code Explanation](#code-explanation)
-
-\- \[Switch Behavior](#switch-behavior)
-
-\- \[UART Configuration](#uart-configuration)
-
-\- \[Build \& Run](#build--run)
-
-\- \[Code](#code)
-
-\- \[Repository Structure](#repository-structure)
-
-\- \[License](#license)
-
-\- \[Author](#author)
-
-\- \[Contact](#contact)
-
-
+This project demonstrates the use of **FreeRTOS counting semaphores and mutexes** on an LPC2138 microcontroller. It simulates shared resource access using push-button switches and provides debug messages via UART.
 
 ---
 
-
-
-\## ✅ Overview
-
-
-
-This project demonstrates the usage of \*\*FreeRTOS counting semaphores and mutexes\*\* on an LPC2138 microcontroller. It simulates shared resource access using three push-button switches and outputs informative debug messages via UART to a virtual terminal.
-
-
-
----
-
-
-
-\## 💡 Schematic
-
-
-
-The project schematic is shown below (exported from Proteus):
-
-
+## 💡 Schematic
 
 <p align="center">
-
-&nbsp; <img src="./schematic.png" alt="Schematic" width="700"/>
-
+  <img src="./schematic.png" alt="Schematic" width="700"/>
 </p>
 
-
-
----
-
-
-
-\## ✨ Features
-
-
-
-\- Uses \*\*counting semaphore\*\* to control access to a resource (array `a\[]`).
-
-\- Uses \*\*mutex\*\* to protect critical sections and prevent race conditions.
-
-\- Provides real-time feedback over UART.
-
-\- Demonstrates multitasking using FreeRTOS tasks.
-
-
+> **Note:** Save your schematic as `schematic.png` and include it in this repo for proper rendering.
 
 ---
 
+## ✨ Features
 
-
-\## ⚡ Hardware Connections
-
-
-
-| Component         | LPC2138 Pin      | Description                         |
-
-|-------------------|------------------|-------------------------------------|
-
-| Switch 1          | P0.12            | Semaphore Take Task 1               |
-
-| Switch 2          | P0.14            | Semaphore Give Task                 |
-
-| Switch 3          | P0.13            | Semaphore Take Task 2               |
-
-| UART0 TX          | TXD0 (P0.0)      | UART transmit to terminal          |
-
-| UART0 RX          | RXD0 (P0.1)      | UART receive (optional)            |
-
-| Pull-down resistors | All switches   | Ensures proper logic level when unpressed |
-
-
+- Demonstrates **counting semaphore** for managing shared resource access.
+- Uses **mutex** to protect critical sections and avoid race conditions.
+- Real-time debug feedback via UART.
+- Multi-tasking using FreeRTOS tasks.
 
 ---
 
+## ⚡ Hardware Connections
 
-
-\## 🧑‍💻 Code Explanation
-
-
-
-\### Semaphores
-
-
-
-\- \*\*Counting Semaphore (`m`)\*\*: Controls access to the shared array `a\[]`. Initialized with a count of 5.
-
-\- \*\*Mutex (`m2`)\*\*: Provides mutual exclusion during display and data updates.
-
-
-
-\### Tasks
-
-
-
-\- \*\*lcd1 (Switch 1)\*\*: Takes the counting semaphore, displays array value and semaphore count before \& after taking.
-
-\- \*\*lcd3 (Switch 3)\*\*: Similar to lcd1, operates with a different switch.
-
-\- \*\*lcd2 (Switch 2)\*\*: Releases (gives) the counting semaphore, displays count before \& after giving.
-
-
-
-\### Shared Resource
-
-
-
-\- \*\*Array `a\[5]`\*\*: Holds values `{8, 3, 5, 6, 7}` which are accessed sequentially.
-
-
+| Component         | LPC2138 Pin | Description                       |
+|-------------------|-------------|-----------------------------------|
+| Switch 1          | P0.12       | Semaphore take (Task 1)           |
+| Switch 2          | P0.14       | Semaphore give                    |
+| Switch 3          | P0.13       | Semaphore take (Task 3)           |
+| UART0 TX          | P0.0        | Connect to virtual terminal       |
+| UART0 RX          | P0.1        | Connect to virtual terminal (optional) |
+| Pull-down resistors | All switches | Ensure stable logic when unpressed |
 
 ---
 
+## 🧑‍💻 Code Explanation
 
+### Semaphores
 
-\## 🎛️ Switch Behavior
+- **Counting Semaphore (`m`)**: Controls access to the array `a[]`, initialized to count 5.
+- **Mutex (`m2`)**: Ensures only one task prints or updates at a time.
 
+### Tasks
 
+- **lcd1 (Switch 1)**: Takes semaphore, displays array value and count before & after.
+- **lcd3 (Switch 3)**: Similar to lcd1, using a separate button.
+- **lcd2 (Switch 2)**: Gives semaphore back, displays count before & after.
 
-| Switch   | Action                               |
+### Shared Resource
 
-|-----------|------------------------------------|
-
-| Switch 1 | Take counting semaphore \& display array value |
-
-| Switch 2 | Give counting semaphore back         |
-
-| Switch 3 | Take counting semaphore \& display array value |
-
-
+- Array `a[5]` stores data `{8, 3, 5, 6, 7}` accessed cyclically.
 
 ---
 
+## 🎛️ Switch Behavior
 
+| Switch   | Action                                |
+|-----------|-------------------------------------|
+| Switch 1 | Take counting semaphore, show data   |
+| Switch 2 | Give counting semaphore              |
+| Switch 3 | Take counting semaphore, show data   |
 
-\## 🔧 UART Configuration
+---
 
+## 🔧 UART Configuration
 
-
-\- Baud rate: \*\*9600 bps\*\*
-
-\- Settings: \*\*8 data bits, no parity, 1 stop bit\*\*
-
-
+- **Baud rate**: 9600 bps
+- **Format**: 8 data bits, no parity, 1 stop bit
 
 ```c
-
 U0LCR = 0x83; // Enable DLAB
-
-U0DLL = 98;   // Set baud rate divisor for 9600
-
+U0DLL = 98;   // Baud rate divisor for 9600
 U0DLM = 0;
+U0LCR = 0x03; // Disable DLAB, set 8-bit data
 
-U0LCR = 0x03; // Disable DLAB, 8-bit data 
+```
 
+## ⚙️ Build & Run
 
+Hardware Setup
 
-``` 
+Connect switches to P0.12, P0.13, P0.14 with pull-down resistors.
 
+Connect UART TX to virtual terminal or USB-UART converter.
 
+Build
 
-\## ⚙️ Build \& Run
+Use Keil uVision or any ARM IDE.
 
-Hardware Setup (Proteus or real board)
+Compile main.c.
 
-\- Connect switches to P0.12, P0.13, and P0.14 with pull-down resistors.
+Load
 
-\- Connect UART0 TX pin to a virtual terminal (Proteus) or a USB-UART converter.
+Load hex to LPC2138 (or simulate in Proteus).
 
+Interact
 
+Press switches and observe messages on UART terminal.
 
-
-
-\## Build
-
-
-
-\- Use Keil uVision or your preferred IDE.
-
-\- Compile the provided main.c.
-
-
-
-\## Load \& Simulate
-
-
-
-\- Load hex file to LPC2138 in Proteus or on hardware.
-
-\- Start simulation or power on the board.
-
-
-
-\## Interact
-
-
-
-\- Press switches and observe UART terminal messages.
-
-
-
-\## 💻 Code
-
+## 💻 Code
 ```c
 
-\#include "FreeRTOS.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 
-\#include "task.h"
-
-\#include "semphr.h"
-
-
-
-int a\[5] = {8, 3, 5, 6, 7};
-
+int a[5] = {8, 3, 5, 6, 7};
 int index = 0;
 
-
-
-void lcd1(void \*parm);
-
-void lcd2(void \*parm);
-
-void lcd3(void \*parm);
-
-void display(const char \*);
-
+void lcd1(void *parm);
+void lcd2(void *parm);
+void lcd3(void *parm);
+void display(const char *);
 void trans(char);
 
-
-
-SemaphoreHandle\_t m, m2;
-
-
+SemaphoreHandle_t m, m2;
 
 int main()
-
 {
+    PINSEL0 = 1 | 1 << 2;
+    U0LCR = 0x83;
+    U0DLL = 98;
+    U0DLM = 0;
+    U0LCR = 0x03;
 
-&nbsp;   PINSEL0 = 1 | 1 << 2;
+    PINSEL1 = 0;
+    IO0DIR = 0;
+    IO1DIR = ~0;
 
-&nbsp;   U0LCR = 0x83;
+    m = xSemaphoreCreateCounting(5, 5);
+    if (m == NULL)
+        display("Failed To Create Counting Semaphore\r\n");
+    else
+        display("Successfully Created Counting Semaphore\r\n");
 
-&nbsp;   U0DLL = 98;
+    m2 = xSemaphoreCreateMutex();
+    if (m2 == NULL)
+        display("Failed To Create Mutex\r\n");
+    else
+        display("Successfully Created Mutex\r\n");
 
-&nbsp;   U0DLM = 0;
+    xTaskCreate(lcd1, "Task1", 90, NULL, 0, NULL);
+    xTaskCreate(lcd2, "Task2", 90, NULL, 0, NULL);
+    xTaskCreate(lcd3, "Task3", 90, NULL, 0, NULL);
 
-&nbsp;   U0LCR = 0x03;
-
-
-
-&nbsp;   PINSEL1 = 0;
-
-&nbsp;   IO0DIR = 0;
-
-&nbsp;   IO1DIR = ~0;
-
-
-
-&nbsp;   m = xSemaphoreCreateCounting(5, 5);
-
-&nbsp;   if (m == NULL)
-
-&nbsp;       display("Failed To Create Counting Semaphore\\r\\n");
-
-&nbsp;   else
-
-&nbsp;       display("Successfully Created Counting Semaphore\\r\\n");
-
-
-
-&nbsp;   m2 = xSemaphoreCreateMutex();
-
-&nbsp;   if (m2 == NULL)
-
-&nbsp;       display("Failed To Create Mutex\\r\\n");
-
-&nbsp;   else
-
-&nbsp;       display("Successfully Created Mutex\\r\\n");
-
-
-
-&nbsp;   xTaskCreate(lcd1, "Task1", 90, NULL, 0, NULL);
-
-&nbsp;   xTaskCreate(lcd2, "Task2", 90, NULL, 0, NULL);
-
-&nbsp;   xTaskCreate(lcd3, "Task3", 90, NULL, 0, NULL);
-
-
-
-&nbsp;   vTaskStartScheduler();
-
-&nbsp;   while (1);
-
+    vTaskStartScheduler();
+    while (1);
 }
-
-
 
 void trans(char a)
-
 {
-
-&nbsp;   while ((U0LSR \& (1 << 5)) == 0);
-
-&nbsp;   U0THR = a;
-
+    while ((U0LSR & (1 << 5)) == 0);
+    U0THR = a;
 }
 
-
-
-void display(const char \*a)
-
+void display(const char *a)
 {
-
-&nbsp;   while (\*a)
-
-&nbsp;   {
-
-&nbsp;       trans(\*a++);
-
-&nbsp;   }
-
+    while (*a)
+    {
+        trans(*a++);
+    }
 }
 
-
-
-void lcd1(void \*parm)
-
+void lcd1(void *parm)
 {
-
-&nbsp;   char b;
-
-&nbsp;   while (1)
-
-&nbsp;   {
-
-&nbsp;       if ((IO0PIN \& (1 << 12)) == (1 << 12))
-
-&nbsp;       {
-
-&nbsp;           b = uxSemaphoreGetCount(m);
-
-&nbsp;           if (xSemaphoreTake(m, 1000) == 1)
-
-&nbsp;           {
-
-&nbsp;               if (xSemaphoreTake(m2, 3000) == 1)
-
-&nbsp;               {
-
-&nbsp;                   display("\\r\\nArray Value is ");
-
-&nbsp;                   trans(a\[index++] + 48);
-
-&nbsp;                   if (index == 5) index = 0;
-
-&nbsp;                   display("\\rIn Take");
-
-&nbsp;                   display("\\rBefore Taken - ");
-
-&nbsp;                   trans(b + 48);
-
-&nbsp;                   b = uxSemaphoreGetCount(m);
-
-&nbsp;                   display("\\rAfter Taken - ");
-
-&nbsp;                   trans(b + 48);
-
-&nbsp;                   xSemaphoreGive(m2);
-
-&nbsp;               }
-
-&nbsp;               while ((IO0PIN \& (1 << 12)) == (1 << 12));
-
-&nbsp;           }
-
-&nbsp;       }
-
-&nbsp;   }
-
+    char b;
+    while (1)
+    {
+        if ((IO0PIN & (1 << 12)) == (1 << 12))
+        {
+            b = uxSemaphoreGetCount(m);
+            if (xSemaphoreTake(m, 1000) == 1)
+            {
+                if (xSemaphoreTake(m2, 3000) == 1)
+                {
+                    display("\r\nArray Value is ");
+                    trans(a[index++] + 48);
+                    if (index == 5) index = 0;
+                    display("\rIn Take");
+                    display("\rBefore Taken - ");
+                    trans(b + 48);
+                    b = uxSemaphoreGetCount(m);
+                    display("\rAfter Taken - ");
+                    trans(b + 48);
+                    xSemaphoreGive(m2);
+                }
+                while ((IO0PIN & (1 << 12)) == (1 << 12));
+            }
+        }
+    }
 }
 
-
-
-void lcd3(void \*parm)
-
+void lcd3(void *parm)
 {
-
-&nbsp;   char b;
-
-&nbsp;   while (1)
-
-&nbsp;   {
-
-&nbsp;       if ((IO0PIN \& (1 << 13)) == (1 << 13))
-
-&nbsp;       {
-
-&nbsp;           b = uxSemaphoreGetCount(m);
-
-&nbsp;           if (xSemaphoreTake(m, 1000) == 1)
-
-&nbsp;           {
-
-&nbsp;               if (xSemaphoreTake(m2, 3000) == 1)
-
-&nbsp;               {
-
-&nbsp;                   display("\\r\\nArray Value is ");
-
-&nbsp;                   trans(a\[index++] + 48);
-
-&nbsp;                   if (index == 5) index = 0;
-
-&nbsp;                   display("\\rIn Take");
-
-&nbsp;                   display("\\rBefore Taken - ");
-
-&nbsp;                   trans(b + 48);
-
-&nbsp;                   b = uxSemaphoreGetCount(m);
-
-&nbsp;                   display("\\rAfter Taken - ");
-
-&nbsp;                   trans(b + 48);
-
-&nbsp;                   xSemaphoreGive(m2);
-
-&nbsp;               }
-
-&nbsp;               while ((IO0PIN \& (1 << 13)) == (1 << 13));
-
-&nbsp;           }
-
-&nbsp;       }
-
-&nbsp;   }
-
+    char b;
+    while (1)
+    {
+        if ((IO0PIN & (1 << 13)) == (1 << 13))
+        {
+            b = uxSemaphoreGetCount(m);
+            if (xSemaphoreTake(m, 1000) == 1)
+            {
+                if (xSemaphoreTake(m2, 3000) == 1)
+                {
+                    display("\r\nArray Value is ");
+                    trans(a[index++] + 48);
+                    if (index == 5) index = 0;
+                    display("\rIn Take");
+                    display("\rBefore Taken - ");
+                    trans(b + 48);
+                    b = uxSemaphoreGetCount(m);
+                    display("\rAfter Taken - ");
+                    trans(b + 48);
+                    xSemaphoreGive(m2);
+                }
+                while ((IO0PIN & (1 << 13)) == (1 << 13));
+            }
+        }
+    }
 }
 
-
-
-void lcd2(void \*parm)
-
+void lcd2(void *parm)
 {
-
-&nbsp;   char b;
-
-&nbsp;   while (1)
-
-&nbsp;   {
-
-&nbsp;       if ((IO0PIN \& (1 << 14)) == (1 << 14))
-
-&nbsp;       {
-
-&nbsp;           if (xSemaphoreTake(m2, 3000) == 1)
-
-&nbsp;           {
-
-&nbsp;               b = uxSemaphoreGetCount(m);
-
-&nbsp;               display("\\rIn give");
-
-&nbsp;               display("\\rBefore Given - ");
-
-&nbsp;               trans(b + 48);
-
-&nbsp;               xSemaphoreGive(m);
-
-&nbsp;               b = uxSemaphoreGetCount(m);
-
-&nbsp;               display("\\rAfter Given - ");
-
-&nbsp;               trans(b + 48);
-
-&nbsp;               while ((IO0PIN \& (1 << 14)) == (1 << 14));
-
-&nbsp;               xSemaphoreGive(m2);
-
-&nbsp;           }
-
-&nbsp;       }
-
-&nbsp;   }
-
+    char b;
+    while (1)
+    {
+        if ((IO0PIN & (1 << 14)) == (1 << 14))
+        {
+            if (xSemaphoreTake(m2, 3000) == 1)
+            {
+                b = uxSemaphoreGetCount(m);
+                display("\rIn give");
+                display("\rBefore Given - ");
+                trans(b + 48);
+                xSemaphoreGive(m);
+                b = uxSemaphoreGetCount(m);
+                display("\rAfter Given - ");
+                trans(b + 48);
+                while ((IO0PIN & (1 << 14)) == (1 << 14));
+                xSemaphoreGive(m2);
+            }
+        }
+    }
 }
-
-
-
 ```
 
-
-
-\## 📁 Repository Structure
-
+## 📁 Repository Structure
 ```
-
 .
-
 ├── schematic.png
-
 ├── main.c
-
 ├── README.md
-
-
-
 ```
 
+## ⚖️ License
 
+This project is open-source and free to use for educational and research purposes.
 
-\## ⚖️ License
+## 👨‍💻 Author
 
+Anandhu AKR
 
+## 📬 Contact
 
-This project is open-source and free to use for academic and research purposes.
+For any queries, feel free to open an issue or reach me directly on GitHub.
 
-
-
-\## 👨‍💻 Author
-
-
-
-Anandhu-AKR
-
-
-
-\## 📬 Contact
-
-
-
-For questions or contributions, feel free to create an issue or reach me directly via your email or your GitHub profile link.
-
-
-
-\## ⭐ Support
-
-
-
-If you like this project, please consider giving it a star!
-
-
-
-#   L P C 2 1 3 8 - F r e e R T O S - S e m a p h o r e - M u t e x - D e m o  
- 
+## ⭐ If you found this project helpful, please consider giving it a star!
