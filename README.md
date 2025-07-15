@@ -1,8 +1,12 @@
 #  LPC2138 FreeRTOS Semaphore & Mutex Demo
 
----
+## ✅ Overview
+
+This project demonstrates the use of **FreeRTOS counting semaphores and mutexes** on an LPC2138 microcontroller. It simulates shared resource access using push-button switches and provides debug messages via UART.
 
 ## 📄 Table of Contents
+
+---
 
 - [Overview](#overview)
 - [Schematic](#schematic)
@@ -17,12 +21,6 @@
 - [License](#license)
 - [Author](#author)
 - [Contact](#contact)
-
----
-
-## ✅ Overview
-
-This project demonstrates the use of **FreeRTOS counting semaphores and mutexes** on an LPC2138 microcontroller. It simulates shared resource access using push-button switches and provides debug messages via UART.
 
 ---
 
