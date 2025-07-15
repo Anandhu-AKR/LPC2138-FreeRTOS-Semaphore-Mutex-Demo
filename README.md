@@ -32,8 +32,6 @@ This project demonstrates the use of **FreeRTOS counting semaphores and mutexes*
   <img src="./schematic.png" alt="Schematic" width="700"/>
 </p>
 
-> **Note:** Save your schematic as `schematic.png` and include it in this repo for proper rendering.
-
 ---
 
 ## ✨ Features
